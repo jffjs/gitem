@@ -1,0 +1,5 @@
+#! /usr/bin/env ruby
+require 'bundler/setup' # remove this before releasing gem
+require 'gitem'
+
+Gitem::App.start
