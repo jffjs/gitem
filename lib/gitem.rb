@@ -7,4 +7,5 @@ module Gitem
 
   require 'gitem/app'
   require 'gitem/api'
+  require 'gitem/profile'
 end
