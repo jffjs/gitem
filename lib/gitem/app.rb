@@ -12,20 +12,30 @@ module Gitem
     desc "pull [USER]", "Update or add all the repos in your list.  Specify Github user to add that user's watched repos to your list"
     def pull(user_name=nil)
       profile = Profile.open 
-      remote_repos = Gitem::API.watched_repos(user_name)['repositories']
+      user_name ||= profile.user
+      remote_repos = Repository.remote_repos(user_name)
 
       remote_repos[5..7].each do |repo|
-        unless profile.has_repo?(repo['name'])
-          say_status "add repo", "#{repo['owner']}/#{repo['name']}", :blue
-          run "git clone #{repo['url']}"
-          profile.repos <<  { 'owner' => repo['owner'],
-                              'name'  => repo['name'],
-                              'url'   => repo['url'] }
+        repo.dir = repo.name
+        repo.dir = repo.dir +  "-#{repo.owner}" if repo.fork
+
+        unless profile.has_repo?(repo)
+          say_status "add repo", "#{repo.owner}/#{repo.name}", :blue
+          run "git clone #{repo.url} #{repo.dir}"
+          profile.repos <<  { 'owner' => repo.owner,
+                              'name'  => repo.name,
+                              'url'   => repo.url,
+                              'directory' => repo.dir }
         else
           # update repo
+          say_status "update repo", "#{repo.owner}/#{repo.name}"
+          inside "#{repo.dir}" do
+            run "git pull"
+          end
         end
       end
 
+      profile.user ||= user_name
       profile.save
     end
 

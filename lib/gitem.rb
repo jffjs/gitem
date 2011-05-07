@@ -5,7 +5,8 @@ module Gitem
   require 'fileutils'
   require 'yaml'
 
-  require 'gitem/app'
   require 'gitem/api'
+  require 'gitem/app'
   require 'gitem/profile'
+  require 'gitem/repository'
 end

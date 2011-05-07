@@ -26,10 +26,10 @@ module Gitem
       end
     end
 
-    def has_repo?(name)
+    def has_repo?(repo)
       result = false
-      @repos.each do |repo|
-        if repo['name'] == name
+      @repos.each do |r|
+        if r['name'] == repo.name && File.exists?(repo.dir)
           result = true 
         end
       end
