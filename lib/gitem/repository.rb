@@ -1,13 +1,12 @@
 module Gitem
   class Repository
-    attr_accessor :owner, :name, :url, :dir, :fork
+    attr_accessor :owner, :name, :url, :dir, :fork, :ignore
 
-    def initialize(owner, name, url, dir=nil, fork=nil)
+    def initialize(owner, name, url, dir=nil)
       @owner = owner
       @name = name
       @url = url
       @dir = dir
-      @fork = fork
     end
 
     def self.local_repos(profile)
@@ -22,15 +21,19 @@ module Gitem
       remote_data = Gitem::API.watched_repos(user)['repositories']
       repos = []
       remote_data.each do |r|
-        repos << self.new(r['owner'], r['name'], r['url'], r['fork'])
+        repo = self.new(r['owner'], r['name'], r['url'])
+        repo.fork = r['fork']
+        repos << repo
       end
       return repos
     end
 
-    def add
+    def full_name
+      "#{owner}/#{name}"
     end
 
-    def update
+    def ==(other)
+      self.full_name == other.full_name
     end
   end
 end

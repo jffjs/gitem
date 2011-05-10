@@ -11,27 +11,27 @@ module Gitem
 
     desc "pull [USER]", "Update or add all the repos in your list.  Specify Github user to add that user's watched repos to your list"
     def pull(user_name=nil)
-      profile = Profile.open 
+      profile = Profile.new #Profile.open 
       user_name ||= profile.user
       remote_repos = Repository.remote_repos(user_name)
 
-      remote_repos[5..7].each do |repo|
+      remote_repos.each do |repo|
         repo.dir = repo.name
         repo.dir = repo.dir +  "-#{repo.owner}" if repo.fork
 
-        unless profile.has_repo?(repo)
-          say_status "add repo", "#{repo.owner}/#{repo.name}", :blue
-          run "git clone #{repo.url} #{repo.dir}"
-          profile.repos <<  { 'owner' => repo.owner,
-                              'name'  => repo.name,
-                              'url'   => repo.url,
-                              'directory' => repo.dir }
-        else
-          # update repo
-          say_status "update repo", "#{repo.owner}/#{repo.name}"
-          inside "#{repo.dir}" do
-            run "git pull"
+        unless profile.ignored.include?(repo.full_name)
+          if profile.has_repo?(repo)
+            say_status "update repo", "#{repo.full_name}", :blue
+            inside "#{repo.dir}" do
+              run "git pull"
+            end
+          else
+            say_status "add repo", "#{repo.full_name}", :blue
+            run "git clone #{repo.url} #{repo.dir}"
+            profile.repos << repo 
           end
+        else
+          say_status "ignoring repo", "#{repo.full_name}", :blue
         end
       end
 
@@ -55,8 +55,12 @@ module Gitem
     def list
     end
 
-    desc "remove <REPO>", "Remove a repo from your list"
-    def remove(repo_name)
+    desc "ignore <REPO>", "Ignore this repo, gitem will no longer try to add or update it"
+    def ignore(repo_name)
+      profile = Profile.open
+      say_status "ignore repo", repo_name, :blue
+      profile.ignored << repo_name
+      profile.save
     end
 
     desc "user <NAME>", "Change the default Github user"

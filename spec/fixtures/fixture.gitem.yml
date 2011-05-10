@@ -1,0 +1,58 @@
+--- 
+user: jffjs
+repositories: 
+- name: ubuwaits/css3-buttons
+  url: https://github.com/ubuwaits/css3-buttons
+  directory: 
+- name: vim-scripts/moria
+  url: https://github.com/vim-scripts/moria
+  directory: 
+- name: plataformatec/devise
+  url: https://github.com/plataformatec/devise
+  directory: 
+- name: mongoid/mongoid
+  url: https://github.com/mongoid/mongoid
+  directory: 
+- name: jffjs/beermee
+  url: https://github.com/jffjs/beermee
+  directory: 
+- name: michenriksen/css3buttons
+  url: https://github.com/michenriksen/css3buttons
+  directory: 
+- name: ronaldwan/foursquare-api
+  url: https://github.com/ronaldwan/foursquare-api
+  directory: 
+- name: jffjs/vim-setup
+  url: https://github.com/jffjs/vim-setup
+  directory: 
+- name: kristianmandrup/mongoid-geo
+  url: https://github.com/kristianmandrup/mongoid-geo
+  directory: 
+- name: anthonator/skittles
+  url: https://github.com/anthonator/skittles
+  directory: 
+- name: jffjs/untappd-api
+  url: https://github.com/jffjs/untappd-api
+  directory: 
+- name: Flotype/now
+  url: https://github.com/Flotype/now
+  directory: 
+- name: jffjs/mongoid_auto_inc
+  url: https://github.com/jffjs/mongoid_auto_inc
+  directory: 
+- name: jffjs/gitem
+  url: https://github.com/jffjs/gitem
+  directory: 
+- name: jffjs/foursquare-api
+  url: https://github.com/jffjs/foursquare-api
+  directory: foursquare-api-jffjs
+- name: jffjs/moria
+  url: https://github.com/jffjs/moria
+  directory: moria-jffjs
+ignored: 
+- sproutcore/sproutcore
+- ruby/ruby
+- rails/rails
+- mongodb/mongo
+- evanphx/rubinius
+- joyent/node

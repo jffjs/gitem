@@ -15,6 +15,11 @@ describe Gitem::API do
       a_request(:get, Gitem::API.base_uri + '/repos/watched/jffjs').
         should have_been_made
     end
+
+    it "should return a hash" do
+      results = Gitem::API.watched_repos("jffjs")
+      results.should be_a Hash
+    end
   end
 
   describe ".repo" do
@@ -29,6 +34,11 @@ describe Gitem::API do
       Gitem::API.repo("schacon", "grit")
       a_request(:get, Gitem::API.base_uri + '/repos/show/schacon/grit').
         should have_been_made
+    end
+
+    it "should return a hash" do
+      results = Gitem::API.repo("schacon", "grit")
+      results.should be_a Hash
     end
   end
 end
