@@ -2,12 +2,7 @@ module Gitem
   class App < Thor
     include Thor::Actions
     ROOT_PATH = FileUtils.pwd
-    default_task :test
-
-    desc "test", "test task"
-    def test
-      say ROOT_PATH
-    end
+    default_task :list
 
     desc "pull [USER]", "Update or add all the repos in your list.  Specify Github user to add that user's watched repos to your list"
     def pull(user_name=nil)
@@ -22,7 +17,7 @@ module Gitem
         unless profile.ignored.include?(repo.full_name)
           if profile.has_repo?(repo)
             say_status "update repo", "#{repo.full_name}", :blue
-            inside "#{repo.dir}" do
+            inside repo.dir do
               run "git pull"
             end
           else
@@ -41,6 +36,15 @@ module Gitem
 
     desc "update <REPO>", "Updates the specified repository"
     def update(repo_name)
+      profile = Profile.open
+      remote_repo = Repository.remote
+      if profile.has_repo?(remote_repo)
+        repo = profile.repos.find { |r| r == remote_repo }
+        say_status "update repo", "#{repo.full_name}", :blue
+        inside repo.dir do
+          run "git pull"
+        end
+      end
     end
 
     desc "add <REPO>", "Add a Github repo, source will be downloaded and added to your list"
@@ -53,6 +57,10 @@ module Gitem
 
     desc "list", "Show the Github repos in your list"
     def list
+      profile = Profile.open
+      profile.repos.each do |repo|
+        say repo.full_name
+      end
     end
 
     desc "ignore <REPO>", "Ignore this repo, gitem will no longer try to add or update it"
@@ -65,6 +73,10 @@ module Gitem
 
     desc "user <NAME>", "Change the default Github user"
     def user(name)
+      profile = Profile.open
+      profile.user = name
+      say_status "changing Github user", name, :blue
+      profile.save
     end
   end
 end

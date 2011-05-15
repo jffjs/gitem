@@ -55,10 +55,6 @@ module Gitem
       Profile.write_yaml(profile_data)
     end
 
-    def saved?
-      File.exists?(YAML_PATH)
-    end
-
     def has_repo?(repo)
       @repos.include?(repo) && File.exists?(repo.dir)
     end

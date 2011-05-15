@@ -9,15 +9,24 @@ module Gitem
       @dir = dir
     end
 
-    def self.remote_repos(user)
-      remote_data = Gitem::API.watched_repos(user)['repositories']
-      repos = []
-      remote_data.each do |r|
+    class << self
+      def remote(owner, name)
+        remote_data = Gitem::API.repo(owner, name)['repository']
         repo = self.new(r['owner'], r['name'], r['url'])
         repo.fork = r['fork']
-        repos << repo
+        return repo
       end
-      return repos
+
+      def remote_all(user)
+        remote_data = Gitem::API.watched_repos(user)['repositories']
+        repos = []
+        remote_data.each do |r|
+          repo = self.new(r['owner'], r['name'], r['url'])
+          repo.fork = r['fork']
+          repos << repo
+        end
+        return repos
+      end
     end
 
     def full_name
