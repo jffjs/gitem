@@ -9,14 +9,6 @@ module Gitem
       @dir = dir
     end
 
-    def self.local_repos(profile)
-      repos = []
-      profile.repos.each do |r| 
-        repos << self.new(r['owner'], r['name'], r['url'], r['dir'])  
-      end
-      return repos
-    end
-
     def self.remote_repos(user)
       remote_data = Gitem::API.watched_repos(user)['repositories']
       repos = []

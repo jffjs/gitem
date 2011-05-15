@@ -11,7 +11,7 @@ module Gitem
 
     desc "pull [USER]", "Update or add all the repos in your list.  Specify Github user to add that user's watched repos to your list"
     def pull(user_name=nil)
-      profile = Profile.new #Profile.open 
+      profile = Profile.open_profile #Profile.open 
       user_name ||= profile.user
       remote_repos = Repository.remote_repos(user_name)
 

@@ -6,28 +6,39 @@ module Gitem
     attr_accessor :user, :repos, :ignored
 
     def initialize
-      profile_exists = open_profile
-      unless profile_exists
-        @repos = []
-        @ignored = []
-      end
+      @repos = [] 
+      @ignored = []
     end
 
-    def self.open
-      if File.exists?(YAML_PATH)
-        profile_data = YAML::load(File.open YAML_PATH)
+    class << self
+      def open
+        profile_data = read_yaml 
 
-        repos = []
-        profile_data['repositories'].each do |r|
-          owner, name = r['name'].split(/\//)
-          repos << Repository.new(owner, name, r['url'], r['dir'])
+        if profile_data
+          profile = Profile.new
+
+          profile.user = profile_data['user']
+          profile.ignored = profile_data['ignored'] || Array.new
+
+          profile_data['repositories'].each do |r|
+            owner, name = r['name'].split(/\//)
+            profile.repos << Repository.new(owner, name, r['url'], r['dir'])
+          end
         end
 
-        self.new(profile_data['user'], 
-                 repos,
-                 profile_data['ignored'])
-      else
-        self.new
+        profile || Profile.new
+      end
+
+      def read_yaml(path=nil)
+        path ||= YAML_PATH
+        YAML::load(File.open path) if File.exists?(path)
+      end
+
+      def write_yaml(profile_data, path=nil)
+        path ||= YAML_PATH
+        File.open(path, 'w') do |f|
+          f.write profile_data.to_yaml
+        end
       end
     end
 
@@ -39,36 +50,17 @@ module Gitem
                    'directory' => repo.dir }
       end
       profile_data = { 'user'         => @user, 
-                       'repositories' => repos,
-                       'ignored'      => @ignored }
-      File.open(YAML_PATH, 'w') do |f|
-        f.write profile_data.to_yaml
-      end
+                       'repositories' => (repos unless repos.empty?),
+                       'ignored'      => (@ignored unless @ignored.empty?) }
+      Profile.write_yaml(profile_data)
     end
 
+    def saved?
+      File.exists?(YAML_PATH)
+    end
 
     def has_repo?(repo)
       @repos.include?(repo) && File.exists?(repo.dir)
-    end
-
-    private
-
-    def open_profile
-      profile_data = read_yaml 
-      if profile_data
-        @user = profile_data['user']
-        @ignored = profile_data['ignored']
-        @repos = []
-
-        profile_data['repositories'].each do |r|
-          owner, name = r['name'].split(/\//)
-          @repos << Repository.new(owner, name, r['url'], r['dir'])
-        end
-      end
-    end
-
-    def read_yaml
-      YAML::load(File.open YAML_PATH) if File.exists?(YAML_PATH)
     end
   end
 end
