@@ -9,7 +9,7 @@ describe Gitem::Repository do
     it "should return the full name of the repo" do
       owner = 'jffjs'
       name = 'gitem'
-      repo = Gitem::Repository.new(owner, name, 'http://url.com', '/fake/path')
+      repo = Gitem::Repository.new(owner, name)
       repo.full_name.should == "#{owner}/#{name}"
     end
   end

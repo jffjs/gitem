@@ -1,28 +1,29 @@
 module Gitem
   class Repository
-    attr_accessor :owner, :name, :url, :dir, :fork, :ignore
+    include Gitem::Helper
+    attr_accessor :owner, :name, :url, :dir, :fork
 
-    def initialize(owner, name, url, dir=nil)
+    def initialize(owner, name, options={})
       @owner = owner
       @name = name
-      @url = url
-      @dir = dir
+      @url = options[:url]
+      @dir = options[:dir]
+      @fork = options[:fork]
     end
 
     class << self
       def remote(owner, name)
-        remote_data = Gitem::API.repo(owner, name)['repository']
-        repo = self.new(r['owner'], r['name'], r['url'])
-        repo.fork = r['fork']
-        return repo
+        r = Gitem::API.repo(owner, name)['repository']
+        repo = self.new(r['owner'], r['name'], :url  => r['url'],
+                                               :fork => r['fork'])
       end
 
       def remote_all(user)
         remote_data = Gitem::API.watched_repos(user)['repositories']
         repos = []
         remote_data.each do |r|
-          repo = self.new(r['owner'], r['name'], r['url'])
-          repo.fork = r['fork']
+          repo = self.new(r['owner'], r['name'], :url  => r['url'],
+                                                 :fork => r['fork'])
           repos << repo
         end
         return repos
